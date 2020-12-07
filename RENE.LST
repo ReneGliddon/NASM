@@ -1,0 +1,134 @@
+     1                                  section .data
+     2 00000000 506C6561736520656E-         text1 db "Please enter a letter from A to E: ",10
+     3 00000009 7465722061206C6574-
+     4 00000012 7465722066726F6D20-
+     5 0000001B 4120746F20453A200A 
+     6 00000024 596F7520656E746572-         text2 db "You entered: "
+     7 0000002D 65643A20           
+     8 00000031 496E636F7272656374-         text3 db "Incorrect value entered. Program terminating. ",10
+     9 0000003A 2076616C756520656E-
+    10 00000043 74657265642E205072-
+    11 0000004C 6F6772616D20746572-
+    12 00000055 6D696E6174696E672E-
+    13 0000005E 200A               
+    14 00000060 496E20412E0A                textA db "In A.",10
+    15 00000066 496E20422E0A                textB db "In B.",10
+    16 0000006C 496E20432E0A                textC db "In C.",10
+    17 00000072 496E20442E0A                textD db "In D.",10
+    18 00000078 496E20452E0A                textE db "In E.",10
+    19 0000007E 476F6F64206A6F622E-         textGreat db "Good job.",10
+    20 00000087 0A                 
+    21                                  
+    22                                  section .bss
+    23 00000000 <res 00000010>              letter resb 16
+    24                                  
+    25                                  section .text
+    26                                      global _start
+    27                                  
+    28                                  _start:
+    29 00000000 E81700                      call _printText1
+    30 00000003 E82300                      call _getLetter
+    31 00000006 E82F00                      call _printText2
+    32 00000009 E83B00                      call _printLetter
+    33 0000000C E84700                      call _isA
+    34 0000000F E82600                      call _printText2
+    35                                  
+    36 00000012 B83C00                      mov ax, 60
+    37 00000015 BF0000                      mov di, 0
+    38 00000018 0F05                        syscall
+    39                                  
+    40                                  _printText1:
+    41 0000001A B80100                      mov ax, 1
+    42 0000001D BF0100                      mov di, 1
+    43 00000020 BE[0000]                    mov si, text1
+    44 00000023 BA2300                      mov dx, 35
+    45 00000026 0F05                        syscall
+    46 00000028 C3                          ret
+    47                                  
+    48                                  _getLetter:
+    49 00000029 B80000                      mov ax, 0
+    50 0000002C BF0000                      mov di, 0
+    51 0000002F BE[0000]                    mov si, letter
+    52 00000032 BA1000                      mov dx, 16
+    53 00000035 0F05                        syscall
+    54 00000037 C3                          ret
+    55                                  
+    56                                  _printText2:
+    57 00000038 B80100                      mov ax, 1
+    58 0000003B BF0100                      mov di, 1
+    59 0000003E BE[2400]                    mov si, text2
+    60 00000041 BA0D00                      mov dx, 13
+    61 00000044 0F05                        syscall
+    62 00000046 C3                          ret
+    63                                  
+    64                                  _printLetter:
+    65 00000047 B80100                      mov ax, 1
+    66 0000004A BF0100                      mov di, 1
+    67 0000004D BE[0000]                    mov si, letter
+    68 00000050 BA1000                      mov dx, 16
+    69 00000053 0F05                        syscall
+    70 00000055 C3                          ret
+    71                                  
+    72                                  _isA:
+    73 00000056 B80100                      mov ax,1
+    74 00000059 BF0100                      mov di,1
+    75 0000005C BE[6000]                    mov si, textA
+    76 0000005F BA0600                      mov dx, 6
+    77 00000062 0F05                        syscall
+    78                                  
+    79 00000064 BE[0000]                    mov si, letter
+    80 00000067 81FE4100                    cmp si, "A"
+    81 0000006B 7502                        jnz isB
+    82 0000006D 7450                        jz great
+    83                                  
+    84                                  isB:
+    85 0000006F B80100                      mov ax, 1
+    86 00000072 BF0100                      mov di, 1
+    87 00000075 BE[6600]                    mov si, textB
+    88 00000078 BA0600                      mov dx, 6
+    89 0000007B 0F05                        syscall
+    90                                  
+    91 0000007D BE[0000]                    mov si, letter
+    92 00000080 81FE4200                    cmp si, 66
+    93 00000084 7502                        jnz isC
+    94 00000086 7437                        jz great
+    95                                  
+    96                                  isC:
+    97 00000088 BE[0000]                    mov si, letter
+    98 0000008B 81FE4300                    cmp si, 67
+    99 0000008F 7502                        jnz isD
+   100 00000091 742C                        jz great
+   101                                  
+   102                                  isD:
+   103 00000093 BE[0000]                    mov si, letter
+   104 00000096 81FE4400                    cmp si, 68
+   105 0000009A 7502                        jnz isE
+   106 0000009C 7421                        jz great
+   107                                  
+   108                                  isE:
+   109 0000009E BE[0000]                    mov si, letter
+   110 000000A1 81FE4500                    cmp si, 69
+   111 000000A5 7502                        jnz terminateFail
+   112 000000A7 7416                        jz great
+   113                                  
+   114                                  terminateFail:
+   115 000000A9 B80100                      mov ax, 1
+   116 000000AC BF0100                      mov di, 1
+   117 000000AF BE[3100]                    mov si, text3
+   118 000000B2 BA2F00                      mov dx, 47
+   119 000000B5 0F05                        syscall
+   120                                  
+   121 000000B7 B83C00                      mov ax, 60
+   122 000000BA BF0000                      mov di, 0
+   123 000000BD 0F05                        syscall
+   124                                  
+   125                                  great:
+   126 000000BF B80100                      mov ax, 1
+   127 000000C2 BF0100                      mov di, 1
+   128 000000C5 BE[7E00]                    mov si, textGreat
+   129 000000C8 BA0900                      mov dx, 9
+   130 000000CB 0F05                        syscall
+   131                                  
+   132 000000CD B83C00                      mov ax, 60
+   133 000000D0 BF0000                      mov di,0
+   134 000000D3 0F05                        syscall
